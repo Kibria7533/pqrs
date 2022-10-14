@@ -1,0 +1,13 @@
+{
+    "name": "Jomabondi",
+    "alias": "jomabondi",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Jomabondi\\Providers\\JomabondiServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

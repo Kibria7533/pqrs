@@ -1,0 +1,13 @@
+{
+    "name": "Landless",
+    "alias": "landless",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Landless\\Providers\\LandlessServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

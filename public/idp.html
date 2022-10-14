@@ -1,0 +1,62 @@
+<html>
+<head>
+    <title>OpenID Connect Session Management RP IFrame</title>
+
+    <script type="text/javascript">
+        const urlParams = new URLSearchParams(window.location.search);
+        const callbackUrl = window.top.location.origin + '/callback';
+        const client_id = 'u13j1BX4H7VuuutmtkbI5z27_5Qa';
+        const session_state = urlParams.get('session_state');
+        const message = client_id + " " + session_state;
+        const targetOrigin = 'https://192.168.13.206:9448/oidc/checksession';
+        const authorizationEndpoint = 'https://192.168.13.206:9448/oauth2/authorize/';
+
+        function check_session() {
+            console.log('session_state', session_state);
+            // console.log('check_session', message);
+            if (client_id !== null && client_id.length !== 0 && client_id !== 'null' && session_state !== null &&
+                session_state.length !== 0 && session_state !== 'null') {
+                const win = document.getElementById("opIFrame").contentWindow;
+                win.postMessage(message, targetOrigin);
+            }
+        }
+
+        function setTimer() {
+            check_session();
+            setInterval("check_session()", 4 * 1000);
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function receiveMessage(e) {
+            console.log('e.data', e);
+
+            if (targetOrigin.indexOf(e.origin) < 0) {
+                return;
+            }
+
+            if (e.data === "changed") {
+                console.log("[RP] session state has changed. sending passive request");
+                if (authorizationEndpoint !== null && authorizationEndpoint.length !== 0 && authorizationEndpoint !==
+                    'null') {
+                    // window.top.location.href = '/login-idp';
+                }
+            } else if (e.data === "unchanged") {
+                console.log("[RP] session state has not changed");
+            } else {
+                console.log("[RP] error while checking session status");
+            }
+        }
+    </script>
+</head>
+
+<body onload="setTimer()">
+<iframe id="opIFrame"
+        src=""
+        frameborder="0" width="0" height="0"></iframe>
+<script>
+    console.log('callbackUrl', callbackUrl)
+    document.getElementById("opIFrame").setAttribute("src", "https://192.168.13.206:9448/oidc/checksession?client_id=u13j1BX4H7VuuutmtkbI5z27_5Qa&redirect_uri=" + callbackUrl);
+</script>
+</body>
+</html>

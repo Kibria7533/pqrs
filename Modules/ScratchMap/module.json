@@ -1,0 +1,13 @@
+{
+    "name": "ScratchMap",
+    "alias": "scratchmap",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ScratchMap\\Providers\\ScratchMapServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

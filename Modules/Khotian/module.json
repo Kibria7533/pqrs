@@ -1,0 +1,13 @@
+{
+    "name": "Khotian",
+    "alias": "khotian",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Khotian\\Providers\\KhotianServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
