@@ -28,8 +28,8 @@ return [
     'mouja'=> "মৌজা",
 
     //landless management
-    'landless_management'=> "ভূমিহীন ব্যবস্থাপনা",
-    'applications'=> "আবেদনের তালিকা",
+    'landless_management'=> "User MAnagement",
+    'applications'=> "User List",
     'applications_uno'=> "প্রাথমিকভাবে-বাছাইকৃত",
     'applications_dc'=> "নির্বাচিত ভূমিহীন",
     'applications_approved'=> "অনুমোদিত ভূমিহীন",

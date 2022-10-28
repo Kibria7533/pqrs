@@ -66,7 +66,11 @@ class LandlessUser extends AuthBaseModel
     const PROFILE_PIC_FOLDER_NAME = 'users';
 
     protected $guarded = ['id'];
-
+    public const GENDER = [
+        1 => 'male',
+        2 => 'female',
+        3 => 'others',
+    ];
     /**
      * The attributes that should be hidden for arrays.
      *

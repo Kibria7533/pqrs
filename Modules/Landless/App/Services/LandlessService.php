@@ -401,85 +401,43 @@ class LandlessService
     {
         $authUser = AuthHelper::getAuthUser();
         /**
-         * @var Builder|Landless $landless
+         * @var Builder|LandlessUser $landless
          */
-        $landless = Landless::select(
+        $landless = LandlessUser::select(
             [
-                'landless_applications.id as id',
-                'landless_applications.fullname',
-                'landless_applications.mobile',
-                'landless_applications.email',
-                'landless_applications.identity_number',
-                'landless_applications.gender',
-                'landless_applications.loc_division_bbs',
-                'landless_applications.loc_district_bbs',
-                'landless_applications.loc_upazila_bbs',
-                'landless_applications.loc_union_bbs',
-                'landless_applications.jl_number',
-                'landless_applications.status',
-                //'landless_applications.stage',
-                DB::raw("DATE_FORMAT(landless_applications.created_at, '%d %M, %Y') as application_date"),
+                'landless_users.id as id',
+                'landless_users.name',
+                'landless_users.mobile',
+                'landless_users.gender',
+                'landless_users.email',
+//                'landless_users.status',
+                DB::raw("DATE_FORMAT(landless_users.created_at, '%d %M, %Y') as application_date"),
             ]
         );
 
-        $jurisdictionConditions = Landless::getJurisditionConditions($authUser);
 
-        $landless = $landless
-            /*->whereIn('status', [Landless::STATUS_ON_PROGRESS, Landless::STATUS_DRAFT])
-            ->whereIn('stage', [Landless::STAGE_INITIAL, Landless::STAGE_ACLAND_SENDING])*/
-            ->where($jurisdictionConditions);
 
         return DataTables::eloquent($landless)
-            ->addColumn('action', DatatableHelper::getActionButtonBlock(static function (Landless $landless) use ($authUser) {
+            ->addColumn('action',static function (LandlessUser $landless) use ($authUser) {
                 $str = '';
-                if ($authUser->can('view', $landless)) {
-                    $str .= '<a href="' . route('admin.landless.show', $landless->id) . '" class="btn btn-outline-info btn-sm"> <i class="fas fa-eye"></i> ' . __('generic.show_button_label') . '</a>';
+                if ($authUser->can('view', $landless) || 1) {
+                    $str .= '<a href="' . route('admin.landless.show', $landless->id) . '" class="btn btn-outline-info btn-sm"> <i class="fas fa-eye"></i> ' . __('Show') . '</a>';
+                }
+                if ($authUser->can('update', $landless) || 1) {
+                    $str .= '<a href="' . route('admin.landless.edit', $landless->id) . '" class="btn btn-outline-warning btn-sm"> <i class="fas fa-edit"></i> ' . __('Edit') . '</a>';
                 }
 
-                if ($authUser->can('singleApprove', $landless) && ($landless->status == Landless::STATUS_ON_PROGRESS)) {
-                    $str .= '<a href="#" data-action="' . route('admin.landless.approve', $landless->id) . '" class="btn btn-outline-success btn-sm approve"> <i class="fas fa-check-circle"></i> ' . __('generic.approve') . '</a>';
-                }
-
-                if ($authUser->can('singleReject', $landless) && ($landless->status == Landless::STATUS_ON_PROGRESS)) {
-                    $str .= '<a href="#" data-action="' . route('admin.landless.reject', $landless->id) . '" class="btn btn-outline-danger btn-sm reject"> <i class="fas fa-times-circle"></i> ' . __('generic.reject') . '</a>';
-                }
-
-                if ($authUser->can('update', $landless) && ($landless->status == Landless::STATUS_DRAFT)) {
-                    $str .= '<a href="' . route('admin.landless.edit', $landless->id) . '" class="btn btn-outline-warning btn-sm"> <i class="fas fa-edit"></i> ' . __('generic.edit_button_label') . '</a>';
-                }
-
-                if ($authUser->can('delete', $landless) && ($landless->status == Landless::STATUS_DRAFT)) {
-                    $str .= '<a href="#" data-action="' . route('admin.landless.destroy', $landless->id) . '" class="btn btn-outline-danger btn-sm delete"> <i class="fas fa-trash"></i> ' . __('generic.delete_button_label') . '</a>';
+                if ($authUser->can('delete', $landless) || 1) {
+                    $str .= '<a href="#" data-action="' . route('admin.landless.destroy', $landless->id) . '" class="btn btn-outline-danger btn-sm delete"> <i class="fas fa-trash"></i> ' . __('Delete') . '</a>';
                 }
                 return $str;
-            }))
-            ->addColumn('gender', function (Landless $landless) use ($authUser) {
+            })
+            ->addColumn('gender', function (LandlessUser $landless) use ($authUser) {
                 $str = '';
-                $str .= !empty($landless->gender) ? __('generic.' . Landless::GENDER[$landless->gender]) : '';
+                $str .= !empty($landless->gender) ? __('generic.' . LandlessUser::GENDER[$landless->gender]) : '';
                 return $str;
             })
-            ->addColumn('loc_upazila_title', function (Landless $landless) use ($authUser) {
-                $str = '';
-                $str .= !empty($landless->loc_upazila_bbs) ? __($landless->upazila($landless->loc_division_bbs, $landless->loc_district_bbs, $landless->loc_upazila_bbs)) : '';
-                return $str;
-            })
-            ->addColumn('loc_union_title', function (Landless $landless) use ($authUser) {
-                $str = '';
-                $str .= !empty($landless->loc_union_bbs) ? __($landless->union($landless->loc_division_bbs, $landless->loc_district_bbs, $landless->loc_upazila_bbs, $landless->loc_union_bbs)) : '';
-                return $str;
-            })
-            ->addColumn('mouja_name', function (Landless $landless) use ($authUser) {
-                $str = '';
-                $str .= !empty($landless->jl_number) ? __(LocMouja::getMouja($landless->loc_district_bbs, $landless->loc_upazila_bbs, $landless->jl_number, 'rs')->name_bd) : '';
-                return $str;
-            })
-
-            ->addColumn('status_title', function (Landless $landless) use ($authUser) {
-                $str = '';
-                $str .= '<span class="badge badge-info w-100">'.( !empty(Landless::STATUS[$landless->status]) ?__('generic.'.Landless::STATUS[$landless->status]) : '').'</span>';
-                return $str;
-            })
-            ->rawColumns(['action', 'loc_upazila_title', 'loc_union_title','mouja_name', 'status_title'])
+            ->rawColumns(['action'])
             ->toJson();
     }
 
@@ -523,7 +481,7 @@ class LandlessService
 //        dd($landless->get());
 
         return DataTables::eloquent($landless)
-            ->addColumn('action', DatatableHelper::getActionButtonBlock(static function (Landless $landless) use ($meetingId, $authUser) {
+            ->addColumn('action', DatatableHelper::getActionButtonBlock(static function (LandlessUser $landless) use ($meetingId, $authUser) {
                 $str = '';
                 if ($authUser->can('view', $landless)) {
                     $str .= '<a href="' . route('admin.landless.applicants.show', [$landless->id,$meetingId]) . '" class="btn btn-outline-info btn-sm"> <i class="fas fa-eye"></i> ' . __('generic.show_button_label') . '</a>';

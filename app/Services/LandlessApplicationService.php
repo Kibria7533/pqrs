@@ -23,6 +23,8 @@ class LandlessApplicationService
             'user_type_id' => UserType::USER_TYPE_LANDLESS_USER_CODE,
             'role_id' => $role->id,
             'name' => $data['fullname'],
+            'gender' => $data['gender'],
+            'mobile' => $data['mobile'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),//todo
             'profile_pic' => 'users/default.png',

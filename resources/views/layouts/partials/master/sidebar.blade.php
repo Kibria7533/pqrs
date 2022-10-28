@@ -2,7 +2,7 @@
 <aside class="main-sidebar sidebar-light-primary px-1 py-2">
     <!-- Brand Logo -->
     <a href="/admin" class="">
-        <img src="{{ asset('/assets/dashboard-images/lrms-logo-full.svg') }}" alt="AdminLTE Logo" class="lrms-logo">
+        <img src="{{ asset('/images/cadtbd.png') }}" alt="AdminLTE Logo" class="lrms-logo">
         {{--<img src="{{ asset('/assets/dashboard-images/lrms-logo.svg') }}" alt="" class="lrms-logo">--}}
     </a>
 

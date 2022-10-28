@@ -58,7 +58,6 @@ class LandlessApplicationController extends BaseController
 
         $data = $validatedData->validate();
         $data['status'] = Landless::STATUS_ON_PROGRESS;
-
         try {
             $this->landlessApplicationService->createLandless($data);
         } catch (\Throwable $exception) {

@@ -2,7 +2,7 @@
 
 @php
     $authUser = \App\Helpers\Classes\AuthHelper::getAuthUser();
-    $langBn = Session::get('locale') == 'bn';
+    $langBn = Session::get('locale') == 'en';
 @endphp
 
 @section('content')
@@ -11,14 +11,14 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header custom-header-bg">
-                        <h3 class="card-title font-weight-bold">{{__('generic.landless_list')}}</h3>
+                        <h3 class="card-title font-weight-bold">{{__('User List')}}</h3>
 
 
                         <div class="card-tools">
                             @can('create', \Modules\Landless\App\Models\Landless::class)
                                 <a href="{{ route('admin.landless.create') }}"
                                    class="btn btn-sm btn-primary btn-rounded">
-                                    <i class="fas fa-plus-circle"></i> {{ __('generic.add_new') }}
+                                    <i class="fas fa-plus-circle"></i> {{ __('ADD USER') }}
                                 </a>
                             @endcan
                         </div>
@@ -27,95 +27,6 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="datatable-container">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="loc_upazila_bbs">{{ __('generic.upazila') }} </label>
-                                        <select class="form-control custom-form-control select2"
-                                                name="loc_upazila_bbs"
-                                                id="loc_upazila_bbs"
-                                                data-placeholder="{{ __('generic.select_placeholder') }}"
-                                        >
-                                            <option value="">{{ __('generic.select_placeholder') }}</option>
-                                            @foreach($locUpazilas as $key => $value)
-                                                <option
-                                                    value="{{ $value->bbs_code }}"> {{ $langBn ? $value->title: $value->title_en }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="jl_number">{{ __('generic.mouja') }} </label>
-                                        <select class="form-control custom-form-control select2"
-                                                name="jl_number"
-                                                id="jl_number"
-                                                data-placeholder="{{ __('generic.select_placeholder') }}"
-                                        >
-                                            <option value="">{{ __('generic.select_placeholder') }}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="gender">{{ __('generic.gender') }} </label>
-                                        <select class="custom-select select2"
-                                                id="gender"
-                                                name="gender"
-                                                data-placeholder="{{ __('generic.select_placeholder') }}">
-                                            <option value="">{{ __('generic.select_placeholder') }}</option>
-                                            <option value="1">{{ __('generic.male') }}</option>
-                                            <option value="2">{{ __('generic.female') }}</option>
-                                            <option value="3">{{ __('generic.others') }}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="gender">{{ __('generic.application_date') }} </label>
-                                        <input type="text" style="height: 45px"
-                                               class="flat-date form-control application_date"
-                                               name="application_date"
-                                               id="application_date"
-                                               placeholder="{{ __('generic.select_date') }}"
-                                               value=""/>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="status">{{ __('generic.status') }} </label>
-                                        <select class="custom-select select2"
-                                                id="status"
-                                                name="status"
-                                                data-placeholder="{{ __('generic.select_placeholder') }}">
-                                            <option value="">{{ __('generic.select_placeholder') }}</option>
-
-                                            @foreach(\Modules\Landless\App\Models\Landless::STATUS as $key=>$status)
-                                                @if(!($key==\Modules\Landless\App\Models\Landless::STATUS_INACTIVE || $key==\Modules\Landless\App\Models\Landless::STATUS_DELETED))
-                                                    <option value="{{ $key }}">{{ __('generic.'.$status) }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>&nbsp; </label>
-                                        <div class="input-group mb-3">
-                                            <input type="submit" style="height: 45px"
-                                                   class="btn btn-success w-100"
-                                                   name="filter"
-                                                   id="filter"
-                                                   value="{{ __('generic.search') }}"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <hr>
-                                </div>
-
-                            </div>
-
                             @if($authUser->can('multiApprove', \Modules\Landless\App\Models\Landless::class) || $authUser->can('multiReject', \Modules\Landless\App\Models\Landless::class))
                                 <div id="multi-select-area" class="position-absolute">
                                     <div class="custom-control custom-checkbox custom-control-inline">
@@ -370,7 +281,7 @@
                         targets: 0
                     },
                     {
-                        title: '{{ __('generic.sl_no') }}',
+                        title: '{{ __('sl_no') }}',
                         data: null,
                         defaultContent: "SL#",
                         searchable: false,
@@ -384,52 +295,32 @@
                         visible: false
                     },
                     {
-                        title: "{{ __('generic.name_of_the_applicant') }}",
-                        data: "fullname",
-                        name: "landless_applications.fullname"
+                        title: "{{ __('Name') }}",
+                        data: "name",
+                        name: "landless_users.name"
                     },
                     {
-                        title: "{{ __('generic.mobile_number') }}",
-                        data: "mobile",
-                        name: "landless_applications.mobile"
-                    },
-                    {
-                        title: "{{ __('email') }}",
+                        title: "{{ __('Email') }}",
                         data: "email",
-                        name: "landless_applications.email"
+                        name: "landless_users.email"
                     },
                     {
-                        title: "{{ __('generic.identity_number') }}",
-                        data: "identity_number",
-                        name: "landless_applications.identity_number",
-                    },
-                    {
-                        title: "{{ __('generic.gender') }}",//------------
+                        title: "{{ __('Gender') }}",//------------
                         data: "gender",
-                        name: "landless_applications.gender",
+                        name: "landless_users.gender",
                     },
                     {
-                        title: "{{ __('generic.upazila') }}",
-                        data: "loc_upazila_title",
-                        name: "landless_applications.loc_upazila_bbs",
+                        title: "{{ __('Mobile') }}",//------------
+                        data: "mobile",
+                        name: "landless_users.gender",
                     },
                     {
-                        title: "{{ __('generic.mouja') }}",
-                        data: "mouja_name",
-                        name: "landless_applications.jl_number",
-                    },
-                    {
-                        title: "{{ __('generic.application_date') }}",
+                        title: "{{ __('Date') }}",
                         data: "application_date",
-                        name: "landless_applications.created_at",
+                        name: "landless_users.created_at",
                     },
                     {
-                        title: "{{ __('generic.status') }}",
-                        data: "status_title",
-                        name: "landless_applications.status",
-                    },
-                    {
-                        title: "{{ __('generic.action') }}",
+                        title: "{{ __('Action') }}",
                         data: "action",
                         orderable: false,
                         searchable: false,
