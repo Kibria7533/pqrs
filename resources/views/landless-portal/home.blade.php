@@ -114,82 +114,82 @@
                     @include('master::landless-portal.utils.sidebar')
                 </div>
 
-{{--                <div class="col-md-12">--}}
-{{--                    <div class="p-4">--}}
-{{--                        <h3 class="text-center">Our Recent Activities-2022</h3>--}}
-{{--                        <div class="row">--}}
-{{--                            <div class="col-md-3 p-1">--}}
-{{--                                <table class="table-bordered w-100">--}}
-{{--                                    <tr>--}}
-{{--                                        <th colspan="2" class="p-2 text-center">Webminers</th>--}}
-{{--                                    </tr>--}}
-{{--                                    <tr>--}}
-{{--                                        <td class="p-2 text-center">--}}
-{{--                                            <b class="text-success" style="font-size: 20px">12</b>--}}
-{{--                                            <p>Online</p>--}}
-{{--                                        </td>--}}
-{{--                                        <td class="p-2 text-center">--}}
-{{--                                            <b class="text-success" style="font-size: 20px">32</b>--}}
-{{--                                            <p>On-premise</p>--}}
-{{--                                        </td>--}}
-{{--                                    </tr>--}}
-{{--                                </table>--}}
-{{--                            </div>--}}
-{{--                            <div class="col-md-3 p-1">--}}
-{{--                                <table class="table-bordered w-100">--}}
-{{--                                    <tr>--}}
-{{--                                        <th colspan="2" class="p-2 text-center">Our papers--}}
-{{--                                        </th>--}}
-{{--                                    </tr>--}}
-{{--                                    <tr>--}}
-{{--                                        <td class="p-2 text-center">--}}
-{{--                                            <b class="text-success" style="font-size: 20px">0</b>--}}
-{{--                                            <p>Accepted</p>--}}
-{{--                                        </td>--}}
-{{--                                        <td class="p-2 text-center">--}}
-{{--                                            <b class="text-success" style="font-size: 20px">3</b>--}}
-{{--                                            <p>Accepted</p>--}}
-{{--                                        </td>--}}
-{{--                                    </tr>--}}
-{{--                                </table>--}}
-{{--                            </div>--}}
-{{--                            <div class="col-md-3 p-1">--}}
-{{--                                <table class="table-bordered w-100">--}}
-{{--                                    <tr>--}}
-{{--                                        <th colspan="2" class="p-2 text-center">--}}
-{{--                                          Self development alignment--}}
-{{--                                        </th>--}}
-{{--                                    </tr>--}}
-{{--                                    <tr>--}}
-{{--                                        <td class="p-2 text-center">--}}
-{{--                                            <b class="text-success"--}}
-{{--                                               style="font-size: 20px;display: block;padding: 20px;}">--}}
-{{--                                                20--}}
-{{--                                            </b>--}}
-{{--                                        </td>--}}
-{{--                                    </tr>--}}
-{{--                                </table>--}}
-{{--                            </div>--}}
-{{--                            <div class="col-md-3 p-1">--}}
-{{--                                <table class="table-bordered w-100">--}}
-{{--                                    <tr>--}}
-{{--                                        <th colspan="2" class="p-2 text-center"> Our satisfaction--}}
-{{--                                        </th>--}}
-{{--                                    </tr>--}}
-{{--                                    <tr>--}}
-{{--                                        <td class="p-2 text-center">--}}
-{{--                                            <b class="text-success"--}}
-{{--                                               style="font-size: 20px;display: block;padding: 20px;}">--}}
-{{--                                                100--}}
-{{--                                            </b>--}}
-{{--                                        </td>--}}
-{{--                                    </tr>--}}
-{{--                                </table>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
+                <div class="col-md-12">
+                    <div class="p-4">
+                        <h3 class="text-center">Our Recent Activities-2022</h3>
+                        <div class="row">
+                            <div class="col-md-3 p-1">
+                                <table class="table-bordered w-100">
+                                    <tr>
+                                        <th colspan="2" class="p-2 text-center">Webminers</th>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 text-center">
+                                            <b class="text-success" style="font-size: 20px">12</b>
+                                            <p>Online</p>
+                                        </td>
+                                        <td class="p-2 text-center">
+                                            <b class="text-success" style="font-size: 20px">32</b>
+                                            <p>On-premise</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-3 p-1">
+                                <table class="table-bordered w-100">
+                                    <tr>
+                                        <th colspan="2" class="p-2 text-center">Our papers
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 text-center">
+                                            <b class="text-success" style="font-size: 20px">0</b>
+                                            <p>Accepted</p>
+                                        </td>
+                                        <td class="p-2 text-center">
+                                            <b class="text-success" style="font-size: 20px">3</b>
+                                            <p>Accepted</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-3 p-1">
+                                <table class="table-bordered w-100">
+                                    <tr>
+                                        <th colspan="2" class="p-2 text-center">
+                                          Self development alignment
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 text-center">
+                                            <b class="text-success"
+                                               style="font-size: 20px;display: block;padding: 20px;}">
+                                                20
+                                            </b>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-3 p-1">
+                                <table class="table-bordered w-100">
+                                    <tr>
+                                        <th colspan="2" class="p-2 text-center"> Our satisfaction
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 text-center">
+                                            <b class="text-success"
+                                               style="font-size: 20px;display: block;padding: 20px;}">
+                                                100
+                                            </b>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
-{{--                </div>--}}
+                </div>
             </div>
         </div>
     </div>

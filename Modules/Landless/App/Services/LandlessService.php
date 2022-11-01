@@ -122,145 +122,26 @@ class LandlessService
         }
     }
 
-    public function updateLandless(array $data, Landless $landless)
+    public function updateLandless(array $data, LandlessUser $landless)
     {
-        $familyMembers = [];
-        if (!empty($data['family_members'])) {
-            $memberSl = 0;
-            foreach ($data['family_members'] as $familyMember) {
-                $familyMembers[$memberSl++] = [
-                    'name' => $familyMember['name'],
-                    'mobile' => $familyMember['mobile'],
-                    'profession' => $familyMember['profession'],
-                ];
-            }
-        }
 
-        $references = [];
-        if (!empty($data['references'])) {
-            $referenceSl = 0;
-            foreach ($data['references'] as $reference) {
-                $references[$referenceSl++] = [
-                    'name' => $reference['name'],
-                    'mobile' => $reference['mobile'],
-                    'profession' => $reference['profession'],
-                ];
-            }
-        }
-
-        $landlessApplicationData = [
-            'nothi_number' => $data['nothi_number'],
-            'fullname' => $data['fullname'],
+        $landlessUser = [
+            'name' => $data['name'],
             'mobile' => $data['mobile'],
             'email' => $data['email'],
-            'identity_type' => $data['identity_type'],
-            'identity_number' => $data['identity_number'],
-            'date_of_birth' => $data['date_of_birth'],
-            'landless_type' => $data['landless_type'],
             'gender' => $data['gender'],
-            'father_name' => $data['father_name'],
-            'father_dob' => $data['father_dob'],
-            'father_is_alive' => $data['father_is_alive'],
-            'mother_name' => $data['mother_name'],
-            'mother_dob' => $data['mother_dob'],
-            'mother_is_alive' => $data['mother_is_alive'],
-            'spouse_name' => $data['spouse_name'],
-            'spouse_dob' => $data['spouse_dob'],
-            'spouse_father' => $data['spouse_father'],
-            'spouse_mother' => $data['spouse_mother'],
-            'loc_division_bbs' => $data['loc_division_bbs'],
-            'loc_district_bbs' => $data['loc_district_bbs'],
-            'loc_upazila_bbs' => $data['loc_upazila_bbs'],
-            'loc_union_bbs' => $data['loc_union_bbs'],
-            'jl_number' => $data['jl_number'],
-            'village' => $data['village'],
-            'family_members' => $familyMembers,
-            'bosot_vita_details' => $data['bosot_vita_details'],
-            'present_address' => $data['present_address'],
-            'gurdian_khasland_details' => $data['gurdian_khasland_details'],
-            'nodi_vanga_family_details' => $data['nodi_vanga_family_details'],
-            'freedom_fighters_details' => $data['freedom_fighters_details'],
-            'khasland_details' => $data['khasland_details'],
-            'expected_lands' => $data['expected_lands'],
-            'references' => $references,
-            'application_received_date' => $data['application_received_date'],
-            'receipt_number' => $data['receipt_number'],
-            'source_type' => 'lrms',
-            'status' => $data['status'],
-            //'stage' => $data['stage'],
-            //'previous_stage' => null,
         ];
 
         try {
             DB::beginTransaction();
-            $landlessApplication = $landless->update($landlessApplicationData);
-
-            if ($landlessApplication) {
-                $landlessApplicationAttachmentIds = LandlessApplicationAttachment::where('landless_application_id', $landless->id)->pluck('id')->toArray();
-
-                foreach ($data['attachments'] as $key => $attachment) {
-                    if (!empty($attachment['attachment_id']) && !empty($attachment['attached_file'])) {
-                        $landlessAppplicationAttachment = LandlessApplicationAttachment::find($attachment['attachment_id']);
-
-                        if ($landlessAppplicationAttachment->attachment_file) {
-                            FileHandler::deleteFile($landlessAppplicationAttachment->attachment_file);
-                        }
-
-                        $filename = FileHandler::storePhoto($attachment['attached_file'], 'landless');
-                        $attachmentData = [
-                            'landless_application_id' => $landless->id,
-                            'file_type_id' => $attachment['file_type_id'],
-                            'title' => $attachment['title'],
-                            'attachment_file' => 'landless/' . $filename,
-                        ];
-
-                        $landlessAppplicationAttachment->update($attachmentData);
-                    }
-
-                    if (!empty($attachment['attachment_id']) && empty($attachment['attached_file'])) {
-                        $landlessAppplicationAttachment = LandlessApplicationAttachment::find($attachment['attachment_id']);
-                        $attachmentData = [
-                            'landless_application_id' => $landless->id,
-                            'file_type_id' => $attachment['file_type_id'],
-                            'title' => $attachment['title'],
-                        ];
-                        $landlessAppplicationAttachment->update($attachmentData);
-                    }
-
-                    if (empty($attachment['attachment_id']) && !empty($attachment['attached_file'])) {
-                        $filename = FileHandler::storePhoto($attachment['attached_file'], 'landless');
-                        $attachmentData = [
-                            'landless_application_id' => $landless->id,
-                            'file_type_id' => $attachment['file_type_id'],
-                            'title' => $attachment['title'],
-                            'attachment_file' => 'landless/' . $filename,
-                        ];
-                        LandlessApplicationAttachment::create($attachmentData);
-                    }
-                }
-
-                $attachmentIds = [];
-                foreach ($data['attachments'] as $index => $attachment) {
-                    $attachmentIds[$index] = [
-                        'attachment_id' => !empty($attachment['attachment_id']) ? (int)$attachment['attachment_id'] : null,
-                    ];
-                }
-
-                $attachmentIds = collect($attachmentIds)->whereNotNull('attachment_id')->pluck('attachment_id')->toArray();
-                $deletableIds = array_diff($landlessApplicationAttachmentIds, $attachmentIds);
-                foreach ($deletableIds as $i => $deletableId) {
-                    $landlessAppplicationAttachment = LandlessApplicationAttachment::find($deletableId);
-                    FileHandler::deleteFile($landlessAppplicationAttachment->attachment_file);
-                }
-                LandlessApplicationAttachment::whereIn('id', $deletableIds)->delete();
-            }
+           $landless->update($landlessUser);
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
         }
     }
 
-    public function deleteLandless(Landless $landless): bool
+    public function deleteLandless(LandlessUser $landless): bool
     {
         return $landless->delete();
     }
@@ -268,7 +149,7 @@ class LandlessService
     public function validator(Request $request, $id = null): Validator
     {
         $rules = [
-            'fullname' => 'required|string|max: 191',
+            'name' => 'required|string|max: 191',
             'mobile' => [
                 'required',
                 'string',
@@ -421,14 +302,14 @@ class LandlessService
             ->addColumn('action',static function (LandlessUser $landless) use ($authUser) {
                 $str = '';
                 if ($authUser->can('view', $landless) || 1) {
-                    $str .= '<a href="' . route('admin.landless.show', $landless->id) . '" class="btn btn-outline-info btn-sm"> <i class="fas fa-eye"></i> ' . __('Show') . '</a>';
+                    $str .= '<a href="' . route('admin.landless.show-user', $landless->id) . '" class="btn btn-outline-info btn-sm"> <i class="fas fa-eye"></i> ' . __('Show') . '</a>';
                 }
                 if ($authUser->can('update', $landless) || 1) {
-                    $str .= '<a href="' . route('admin.landless.edit', $landless->id) . '" class="btn btn-outline-warning btn-sm"> <i class="fas fa-edit"></i> ' . __('Edit') . '</a>';
+                    $str .= '<a href="' . route('admin.landless.edit-user', $landless->id) . '" class="btn btn-outline-warning btn-sm"> <i class="fas fa-edit"></i> ' . __('Edit') . '</a>';
                 }
 
                 if ($authUser->can('delete', $landless) || 1) {
-                    $str .= '<a href="#" data-action="' . route('admin.landless.destroy', $landless->id) . '" class="btn btn-outline-danger btn-sm delete"> <i class="fas fa-trash"></i> ' . __('Delete') . '</a>';
+                    $str .= '<a href="#" data-action="' . route('admin.landless.delete-user', $landless->id) . '" class="btn btn-outline-danger btn-sm delete"> <i class="fas fa-trash"></i> ' . __('Delete') . '</a>';
                 }
                 return $str;
             })

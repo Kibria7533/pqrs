@@ -4,6 +4,7 @@ namespace Modules\Landless\App\Http\Controllers;
 
 use App\Helpers\Classes\AuthHelper;
 use App\Http\Controllers\BaseController;
+use App\Models\LandlessUser;
 use App\Models\LocAllMouja;
 use App\Models\LocDistrict;
 use App\Models\LocDivision;
@@ -140,104 +141,24 @@ class LandlessController extends BaseController
         ]);
     }
 
-    /**
-     * Show the specified resource.
-     * @param Landless $landless
-     * @return Renderable
-     */
-    public function show(Landless $landless)
+
+    public function showUser(int  $id)
     {
-        $locDivision = LocDivision::where('bbs_code', $landless->loc_division_bbs)->first();
-        $locDistrict = LocDistrict::where([
-            'division_bbs_code' => $landless->loc_division_bbs,
-            'bbs_code' => $landless->loc_district_bbs,
-        ])->first();
-
-        $locUpazila = LocUpazila::where([
-            'division_bbs_code' => $landless->loc_division_bbs,
-            'district_bbs_code' => $landless->loc_district_bbs,
-            'bbs_code' => $landless->loc_upazila_bbs,
-        ])->first();
-
-        $locUnion = LocUnion::where([
-            'division_bbs_code' => $landless->loc_division_bbs,
-            'district_bbs_code' => $landless->loc_district_bbs,
-            'upazila_bbs_code' => $landless->loc_upazila_bbs,
-            'bbs_code' => $landless->loc_union_bbs,
-        ])->first();
-
-
-        if (Session::get('locale') == 'en') {
-            $locDivision = !empty($locDivision) ? $locDivision->title_en : '';
-            $locDistrict = !empty($locDistrict) ? $locDistrict->title_en : '';
-            $locUpazila = !empty($locUpazila) ? $locUpazila->title_en : '';
-            $locUnion = !empty($locUnion) ? $locUnion->title_en : '';
-
-        } else {
-            $locDivision = !empty($locDivision) ? $locDivision->title : '';
-            $locDistrict = !empty($locDistrict) ? $locDistrict->title : '';
-            $locUpazila = !empty($locUpazila) ? $locUpazila->title : '';
-            $locUnion = !empty($locUnion) ? $locUnion->title : '';
-        }
-
-        $landlessApplicationAttachments = LandlessApplicationAttachment::where('landless_application_id', $landless->id)->get();
-
-       $meetings=Meeting::leftJoin('landless_meeting', function($join) use($landless){
-            $join->on('meetings.id', '=', 'landless_meeting.meeting_id')
-                ->where('landless_meeting.landless_id','=', $landless->id);
-        })
-           ->whereNotNull('landless_meeting.landless_id')
-            ->get();
-        return view(self::VIEW_PATH . '.read', compact('landless', 'locDivision', 'locDistrict', 'locUpazila', 'locUnion','landlessApplicationAttachments','meetings'));
+        $landless=LandlessUser::where('id',$id)->first();
+        return view(self::VIEW_PATH . '.read', compact('landless' ));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param Request $request
-     * @param Landless $landless
-     * @return View
-     */
-    public function edit(Request $request, Landless $landless): View
+    public function editUser(int  $id): View
     {
-        $landlessApplicationAttachments = LandlessApplicationAttachment::where('landless_application_id', $landless->id)->get();
-
-        $locDivisions = LocDivision::all();
-        $districts = LocDistrict::where([
-            'division_bbs_code' => $landless->loc_division_bbs,
-        ])->get();
-
-        $upazilas = LocUpazila::where([
-            'division_bbs_code' => $landless->loc_division_bbs,
-            'district_bbs_code' => $landless->loc_district_bbs,
-        ])->get();
-
-        $unions = LocUnion::where([
-            'division_bbs_code' => $landless->loc_division_bbs,
-            'district_bbs_code' => $landless->loc_district_bbs,
-            'upazila_bbs_code' => $landless->loc_upazila_bbs,
-        ])->get();
-
-        $moujas = LocAllMouja::where([
-            'division_bbs_code' => $landless->loc_division_bbs,
-            'district_bbs_code' => $landless->loc_district_bbs,
-            'upazila_bbs_code' => $landless->loc_upazila_bbs,
-        ])->get();
-
-        $fileTypes = FileType::all();
-
-        return \view(self::VIEW_PATH . '.edit-add', compact('locDivisions', 'districts', 'upazilas', 'unions', 'landless', 'fileTypes', 'moujas', 'landlessApplicationAttachments'));
+        $landless=LandlessUser::where('id',$id)->first();
+        return \view(self::VIEW_PATH . '.edit-add', compact('landless'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param Landless $landless
-     * @return JsonResponse
-     * @throws ValidationException
-     */
-    public function update(Request $request, Landless $landless): JsonResponse
+
+    public function updateUser(Request $request, int $id)
     {
-        $validatedData = $this->landlessService->validator($request, $landless->id);
+
+        $validatedData = $this->landlessService->validator($request, $id);
 
         if ($validatedData->fails()) {
             $errors = $validatedData->errors();
@@ -248,44 +169,9 @@ class LandlessController extends BaseController
             ], 200);
         }
 
-        foreach ($request->attachments as $key => $attachment) {
-            if (empty($attachment['attachment_id']) && empty($attachment['attached_file'])) {
-                return response()->json([
-                    'message' => __("attachments.$key.attached_file is require"),
-                    'alertType' => 'error',
-                ], 200);
-            }
-
-            if (empty($attachment['attachment_id']) && !empty($attachment['attached_file'])) {
-                $fileType = FileType::find($attachment['file_type_id']);
-                $fileExt = $attachment['attached_file']->extension();
-                $allowFormats = explode(',', $fileType->allow_format);
-                $fileExtSearch = array_search($fileExt, $allowFormats);
-
-                if ($fileExtSearch === false) {
-                    return response()->json([
-                        'message' => __("attachments.$key.attached_file ফাইল এর ধরণ $fileType->allow_format এর ভিতর যেকোনো একটি প্রদান করুন!"),
-                        'alertType' => 'error',
-                    ], 200);
-                }
-            }
-        }
 
         $data = $validatedData->validate();
-
-        if ($request->identity_type == Landless::IDENTITY_TYPE_NOT_AVAILABLE) {
-            $data['identity_number'] = null;
-        }
-
-        $authUser = AuthHelper::getAuthUser();
-        $office = Office::find($authUser->office_id);
-
-        if (!empty($office) && $data['loc_upazila_bbs'] != $office->upazila_bbs_code) {
-            $data['loc_division_bbs'] = $office->loc_division_bbs;
-            $data['loc_district_bbs'] = $office->loc_district_bbs;
-            $data['loc_upazila_bbs'] = $office->upazila_bbs_code;
-        }
-
+        $landless=LandlessUser::where('id',$id)->first();
         try {
             $this->landlessService->updateLandless($data, $landless);
         } catch (\Throwable $exception) {
@@ -298,27 +184,30 @@ class LandlessController extends BaseController
             ], 200);
         }
 
-        return response()->json([
-            'message' => __('generic.landless_updated'),
-            'alertType' => 'success',
-            'redirectTo' => route('admin.landless.index'),
+        return redirect(route('admin.landless.index'))->with([
+            'message' => __('User Updated'),
+            'alert-type' => 'success',
         ]);
+//        return response()->json([
+//            'message' => __('User Updated'),
+//            'alertType' => 'success',
+//            'redirectTo' => route('admin.landless.index'),
+//        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param Landless $landless
-     * @return Application|RedirectResponse|Redirector
-     */
-    public function destroy(Landless $landless)
+
+    public function destroyUser(int $id)
     {
+
+        $landlessUser=LandlessUser::where('id',$id)->firstOrFail();
+
         try {
-            $this->landlessService->deleteLandless($landless);
+            $this->landlessService->deleteLandless($landlessUser);
         } catch (\Throwable $exception) {
             Log::debug($exception->getMessage());
 
             return redirect(route('admin.landless.index'))->with([
-                'message' => __('generic.landless_not_removed'),
+                'message' => __('User Removed Successfully'),
                 'alert-type' => 'error',
             ]);
 

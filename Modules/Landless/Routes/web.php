@@ -9,6 +9,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         'land-assignments' => \Modules\Landless\App\Http\Controllers\LandAssignmentController::class,
     ]);
 
+    Route::delete('/landless/delete-user/{landlessId}', [\Modules\Landless\App\Http\Controllers\LandlessController::class, 'destroyUser'])->name('landless.delete-user');
+    Route::get('/landless/show-user/{landlessId}', [\Modules\Landless\App\Http\Controllers\LandlessController::class, 'showUser'])->name('landless.show-user');
+    Route::get('/landless/edit-user/{landlessId}', [\Modules\Landless\App\Http\Controllers\LandlessController::class, 'editUser'])->name('landless.edit-user');
+    Route::put('/landless/update-user/{landlessId}', [\Modules\Landless\App\Http\Controllers\LandlessController::class, 'updateUser'])->name('landless.update-user');
     Route::get('/landless/approve-to-meeting/{landlessId}/{meetingId}', [\Modules\Landless\App\Http\Controllers\LandlessController::class, 'approveToMeeting'])->name('landless.approve.to.meeting');
     Route::delete('/landless/reject-from-meeting/{landlessId}/{meetingId}', [\Modules\Landless\App\Http\Controllers\LandlessController::class, 'rejectFromMeeting'])->name('landless.reject.from.meeting');
     Route::post('/landless/applicants/datatable/{meeting}', [\Modules\Landless\App\Http\Controllers\LandlessController::class, 'getApplicantsDatatable'])->name('landless.applicants.datatable');
